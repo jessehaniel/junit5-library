@@ -8,9 +8,9 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookRestController {
     
-    private BookServiceImpl service;
+    private BookService service;
     
-    public BookRestController(BookServiceImpl service) {
+    public BookRestController(BookService service) {
         this.service = service;
     }
     
