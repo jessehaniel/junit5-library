@@ -7,6 +7,10 @@ public class ExceptionResponse {
     private String exceptionMessage;
     private String details;
     
+    ExceptionResponse(String exceptionMessage) {
+        this(exceptionMessage, null);
+    }
+    
     ExceptionResponse(String exceptionMessage, String details) {
         this.exceptionMessage = exceptionMessage;
         this.details = details;

@@ -12,6 +12,6 @@ public class ExceptionHandlerController {
     
     @ExceptionHandler(NoSuchElementException.class)
     public final ResponseEntity<ExceptionResponse> handleNotSuchElement(NoSuchElementException ex) {
-        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage(), "Id not found"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 }
