@@ -22,17 +22,18 @@ public class BookServiceImpl implements BookService {
     }
     
     @Override
-    public BookDTO delete(int bookId) {
+    public void delete(int bookId) {
         Book book = repository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book ID not found"));
         repository.delete(book);
-        return Book.parseToDtoMono(book);
     }
     
     @Override
     public BookDTO update(int bookId, BookDTO bookDTO) {
         if (repository.findById(bookId).isPresent()) {
-            return Book.parseToDtoMono(repository.save(Book.of(bookDTO)));
+            Book book = Book.of(bookDTO);
+            book.setId(bookId);
+            return Book.parseToDtoMono(repository.save(book));
         } else {
             throw new NoSuchElementException("Book ID not found");
         }

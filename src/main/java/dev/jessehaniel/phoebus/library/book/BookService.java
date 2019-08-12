@@ -4,7 +4,7 @@ import java.util.List;
 
 interface BookService {
     BookDTO save (BookDTO bookDTO);
-    BookDTO delete (int bookId);
+    void delete (int bookId);
     BookDTO update(int bookId, BookDTO bookDTO);
     List<BookDTO> listAll();
 }
