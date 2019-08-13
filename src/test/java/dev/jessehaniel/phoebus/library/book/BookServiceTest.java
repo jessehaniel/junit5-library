@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Tests for Book Service - CRUD operations")
 class BookServiceTest {
     
@@ -86,6 +86,7 @@ class BookServiceTest {
     }
     
     @Test
+    @Tag("exception")
     @DisplayName("Exception throws assertion on DELETE when Book id not found")
     void deleteWithNotFoundException() {
         Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
@@ -95,6 +96,7 @@ class BookServiceTest {
     }
     
     @Test
+    @Tag("exception")
     @DisplayName("Exception throws assertion on UPDATE when Book id not found")
     void updateWithNotFoundException() {
         Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
