@@ -1,5 +1,6 @@
 package dev.jessehaniel.phoebus.library.book;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +16,13 @@ public class BookRestController {
     }
     
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BookDTO save(@RequestBody BookDTO book){
         return service.save(book);
     }
     
     @DeleteMapping("/{bookId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer bookId) {
         service.delete(bookId);
     }
