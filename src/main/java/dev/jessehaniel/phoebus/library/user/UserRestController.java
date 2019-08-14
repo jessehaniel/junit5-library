@@ -36,5 +36,4 @@ class UserRestController {
     public List<UserDTO> listAll(){
         return service.listAll();
     }
-    
 }
