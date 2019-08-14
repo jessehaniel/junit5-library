@@ -28,12 +28,12 @@ public class Book {
     private String isbn;
     private int yearRelease;
     
-    static Book of(@NotNull BookDTO bookDTO) {
+    public static Book of(@NotNull BookDTO bookDTO) {
         return new Book(bookDTO.getId(), bookDTO.getTitle(), bookDTO.getAuthorName(), bookDTO.getResume(), bookDTO.getIsbn(),
                 bookDTO.getYearRelease());
     }
     
-    static List<BookDTO> parseToDtoList(@NotEmpty List<Book> bookList) {
+    public static List<BookDTO> parseToDtoList(@NotEmpty List<Book> bookList) {
         return bookList.stream()
                 .map(Book::parseToDtoMono)
                 .collect(Collectors.toList());
@@ -41,5 +41,9 @@ public class Book {
     
     static BookDTO parseToDtoMono(@NotNull Book book) {
         return new BookDTO(book.getId(), book.getTitle(), book.getAuthorName(), book.getResume(), book.getIsbn(), book.getYearRelease());
+    }
+    
+    public static List<Book> ofList(List<BookDTO> bookList) {
+        return bookList.stream().map(Book::of).collect(Collectors.toList());
     }
 }
