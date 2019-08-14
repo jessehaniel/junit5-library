@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.NoSuchElementException;
 
 @WebMvcTest(BookRestController.class)
+@Tag("lazy")
 class BookRestControllerTest {
     
     private static final String URL_BOOKS = "/books";
@@ -29,10 +30,9 @@ class BookRestControllerTest {
     @Tag("update")
     @DisplayName("RestController test for BookDTO POST method")
     void save() throws Exception {
-        BookDTO bookDTO = new BookDTO(1, "book1", "author1", "resume book1", "123", 2019);
-        
         Mockito.when(bookService.save(Mockito.any(BookDTO.class))).thenAnswer(i -> i.getArgument(0));
-        
+    
+        BookDTO bookDTO = new BookDTO(1, "book1", "author1", "resume book1", "123", 2019);
         String bookJson = new ObjectMapper().writeValueAsString(bookDTO);
         mockMvc.perform(MockMvcRequestBuilders.post(URL_BOOKS)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

@@ -1,7 +1,6 @@
 package dev.jessehaniel.phoebus.library.book;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -12,10 +11,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Tests for Book Service - CRUD operations")
+@DisplayName("Tests for BOOK Service - CRUD operations")
+@Tag("fast")
 class BookServiceTest {
     
     @Mock
@@ -37,7 +44,7 @@ class BookServiceTest {
     @Tag("update")
     @DisplayName("Successful SAVE call")
     void save() {
-        Mockito.when(repository.save(Mockito.any(Book.class))).thenAnswer(i -> {
+        when(repository.save(Mockito.any(Book.class))).thenAnswer(i -> {
             Book book = (Book) i.getArguments()[0];
             book.setId(bookListMock.size() + 1);
             return book;
@@ -46,9 +53,9 @@ class BookServiceTest {
         BookDTO newBookDto = new BookDTO(null, "book4", "author3", "resume book4", "123456", 2018);
         BookDTO bookSaved = service.save(newBookDto);
         
-        Mockito.verify(repository, Mockito.times(1)).save(Mockito.any(Book.class));
-        MatcherAssert.assertThat(bookSaved, CoreMatchers.notNullValue());
-        MatcherAssert.assertThat(bookSaved.getId(), CoreMatchers.notNullValue());
+        verify(repository, Mockito.times(1)).save(Mockito.any(Book.class));
+        assertThat(bookSaved, CoreMatchers.notNullValue());
+        assertThat(bookSaved.getId(), CoreMatchers.notNullValue());
     }
     
     @Test
@@ -56,13 +63,13 @@ class BookServiceTest {
     @DisplayName("Successful DELETE call")
     void delete() {
         Optional<Book> bookMock = bookListMock.stream().map(Book::of).findAny();
-        Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(bookMock);
+        when(repository.findById(anyInt())).thenReturn(bookMock);
         
         int bookId = 0;
         service.delete(bookId);
         
-        Mockito.verify(repository, Mockito.times(1)).findById(bookId);
-        Mockito.verify(repository, Mockito.times(1)).delete(Mockito.any(Book.class));
+        verify(repository, Mockito.times(1)).findById(bookId);
+        verify(repository, Mockito.times(1)).delete(Mockito.any(Book.class));
     }
     
     @Test
@@ -70,8 +77,8 @@ class BookServiceTest {
     @DisplayName("Successful UPDATE call")
     void update() {
         Optional<Book> bookMock = bookListMock.stream().map(Book::of).findAny();
-        Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(bookMock);
-        Mockito.when(repository.save(Mockito.any(Book.class))).thenAnswer(i -> i.getArgument(0));
+        when(repository.findById(anyInt())).thenReturn(bookMock);
+        when(repository.save(Mockito.any(Book.class))).thenAnswer(i -> i.getArgument(0));
         
         Book book = bookMock.orElse(new Book());
         int bookId = book.getId();
@@ -79,41 +86,39 @@ class BookServiceTest {
         bookToChange.setTitle(bookToChange.getTitle().toUpperCase());
         BookDTO bookDtoUpdated = service.update(bookId, bookToChange);
         
-        Mockito.verify(repository, Mockito.times(1)).findById(bookId);
-        Mockito.verify(repository, Mockito.times(1)).save(Mockito.any(Book.class));
-        MatcherAssert.assertThat(bookDtoUpdated.getId(), CoreMatchers.equalTo(bookId));
-        MatcherAssert.assertThat(bookDtoUpdated.getTitle(), CoreMatchers.equalTo(book.getTitle().toUpperCase()));
+        verify(repository, Mockito.times(1)).findById(bookId);
+        verify(repository, Mockito.times(1)).save(Mockito.any(Book.class));
+        assertThat(bookDtoUpdated.getId(), equalTo(bookId));
+        assertThat(bookDtoUpdated.getTitle(), equalTo(book.getTitle().toUpperCase()));
     }
     
     @Test
     @Tag("exception")
     @DisplayName("Exception throws assertion on DELETE when Book id not found")
     void deleteWithNotFoundException() {
-        Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
         int bookId = 4;
-        NoSuchElementException exception = Assertions.assertThrows(NoSuchElementException.class, () -> service.delete(bookId));
-        Assertions.assertEquals("Book ID not found", exception.getMessage());
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> service.delete(bookId));
+        assertEquals("Book ID not found", exception.getMessage());
     }
     
     @Test
     @Tag("exception")
     @DisplayName("Exception throws assertion on UPDATE when Book id not found")
     void updateWithNotFoundException() {
-        Mockito.when(repository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
         BookDTO bookDTO = new BookDTO(4, "book4", "author3", "resume book4", "123456", 2018);
-        NoSuchElementException exception = Assertions.assertThrows(NoSuchElementException.class, () -> service.update(bookDTO.getId(), bookDTO));
-        Assertions.assertEquals("Book ID not found", exception.getMessage());
+        
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> service.update(bookDTO.getId(), bookDTO));
+        assertEquals("Book ID not found", exception.getMessage());
     }
     
     @Test
     @Tag("list")
     @DisplayName("List all call")
     void listAll() {
-        List<Book> bookList = bookListMock.stream().map(Book::of).collect(Collectors.toList());
-        Mockito.when(repository.findAll()).thenReturn(bookList);
-        
+        when(repository.findAll()).thenReturn(Book.ofList(bookListMock));
         List<BookDTO> bookListActual = service.listAll();
-        
-        MatcherAssert.assertThat(bookListActual, CoreMatchers.is(bookListMock));
+        assertThat(bookListActual, CoreMatchers.is(bookListMock));
     }
 }
