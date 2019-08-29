@@ -1,18 +1,16 @@
 package dev.jessehaniel.phoebus.library.book;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     
-    private BookRepository repository;
-    
-    public BookServiceImpl(BookRepository repository) {
-        this.repository = repository;
-    }
+    private final BookRepository repository;
     
     @Override
     public BookDTO save(BookDTO bookDTO) {
